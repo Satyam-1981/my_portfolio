@@ -72,7 +72,8 @@ def contact(request):
         )
 
         messages.success(request, "Message sent! A confirmation email was sent to you.")
-    except Exception:
+    except Exception as e:
+        print(f"SMTP EMAIL ERROR:{e!r}",flush=True)
         messages.warning(
             request,
             "Your message was saved, but the email could not be sent. Check the SMTP settings."
