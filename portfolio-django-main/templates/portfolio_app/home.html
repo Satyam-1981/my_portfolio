@@ -1,0 +1,171 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if profile %}{{ profile.name }}{% else %}My Portfolio{% endif %}</title>
+    <link rel="stylesheet" href="{% static 'portfolio_app/css/style.css' %}">
+    <script>
+        if (localStorage.getItem("theme") === "dark") document.documentElement.classList.add("dark");
+    </script>
+</head>
+<body>
+<header class="navbar">
+    <div class="container nav-inner">
+        <a class="logo" href="#home">{% if profile %}{{ profile.name }}{% else %}Portfolio{% endif %}</a>
+        <div class="nav-right">
+        <nav>
+            <a href="#about">About</a>
+            <a href="#skills">Skills</a>
+            <a href="#projects">Projects</a>
+            <a href="#education">Education</a>
+            <a href="#certificates">Certificates</a>
+            <a href="#contact">Contact</a>
+        </nav>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark mode">🌙</button>
+        </div>
+    </div>
+</header>
+
+<main>
+    <section id="home" class="hero">
+        <div class="container hero-grid">
+            <div>
+                <p class="small-title">HELLO, I'M</p>
+                <h1>{% if profile %}{{ profile.name }}{% else %}Your Name{% endif %}</h1>
+                <h2>{% if profile %}{{ profile.role }}{% else %}Student Developer{% endif %}</h2>
+                <p class="lead">{% if profile %}{{ profile.tagline }}{% else %}I am a student learning Python and building useful web projects.{% endif %}</p>
+                <div class="buttons">
+                    <a class="button primary" href="#projects">View Projects</a>
+                    <a class="button secondary" href="#contact">Contact Me</a>
+                </div>
+                {% if profile and profile.resume %}
+                <a class="resume-link" href="{{ profile.resume.url }}" target="_blank" rel="noopener">View Resume ↗</a>
+                {% endif %}
+            </div>
+            <div class="photo-box">
+                {% if profile and profile.photo %}
+                    <img src="{{ profile.photo.url }}" alt="{{ profile.name }}">
+                {% else %}
+                    <div class="photo-placeholder">Your Photo</div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <div class="container narrow">
+            <p class="small-title">ABOUT ME</p>
+            <h2>Learning, building and improving.</h2>
+            <p class="text">{% if profile %}{{ profile.about }}{% else %}Add your introduction from Django Admin.{% endif %}</p>
+            {% if profile %}
+                <div class="contact-info">
+                    {% if profile.location %}<span>📍 {{ profile.location }}</span>{% endif %}
+                    {% if profile.email %}<a href="mailto:{{ profile.email }}">✉ {{ profile.email }}</a>{% endif %}
+                    {% if profile.github_url %}<a href="{{ profile.github_url }}" target="_blank" rel="noopener">GitHub ↗</a>{% endif %}
+                    {% if profile.linkedin_url %}<a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener">LinkedIn ↗</a>{% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section id="skills" class="section section-light">
+        <div class="container">
+            <p class="small-title">SKILLS</p>
+            <h2>What I work with</h2>
+            <div class="skill-list">
+                {% for skill in skills %}
+                    <div class="skill"><strong>{{ skill.name }}</strong><span>{{ skill.category }}</span></div>
+                {% empty %}
+                    <p class="empty">Add your skills from Django Admin.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="section">
+        <div class="container">
+            <p class="small-title">PROJECTS</p>
+            <h2>Things I have built</h2>
+            <div class="cards">
+                {% for project in projects %}
+                    <article class="card">
+                        {% if project.image %}<img class="project-image" src="{{ project.image.url }}" alt="{{ project.title }}">{% endif %}
+                        <div class="card-body">
+                            <h3>{{ project.title }}</h3>
+                            <p>{{ project.short_description }}</p>
+                            <div class="tags">
+                                <span>{{ project.technologies }}</span>
+                            </div>
+                            <div class="links">
+                                {% if project.github_url %}<a href="{{ project.github_url }}" target="_blank" rel="noopener">GitHub ↗</a>{% endif %}
+                                {% if project.live_url %}<a href="{{ project.live_url }}" target="_blank" rel="noopener">Live Demo ↗</a>{% endif %}
+                            </div>
+                        </div>
+                    </article>
+                {% empty %}
+                    <p class="empty">Add your projects from Django Admin.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section id="education" class="section section-light">
+        <div class="container">
+            <p class="small-title">EDUCATION</p>
+            <h2>My education</h2>
+            <div class="timeline">
+                {% for item in education %}
+                    <div class="timeline-item">
+                        <div class="year">{{ item.start_year }}{% if item.end_year %} — {{ item.end_year }}{% endif %}</div>
+                        <div><h3>{{ item.degree }}</h3><p>{{ item.institution }}{% if item.field %} · {{ item.field }}{% endif %}</p>{% if item.description %}<p class="muted">{{ item.description }}</p>{% endif %}</div>
+                    </div>
+                {% empty %}<p class="empty">Add your education from Django Admin.</p>{% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section id="certificates" class="section">
+        <div class="container">
+            <p class="small-title">CERTIFICATES</p>
+            <h2>Courses & certificates</h2>
+            <div class="cards small-cards">
+                {% for certificate in certificates %}
+                    <article class="card simple-card">
+                        {% if certificate.image %}<img class="certificate-image" src="{{ certificate.image.url }}" alt="{{ certificate.title }}">{% endif %}
+                        <div class="card-body">
+                            <h3>{{ certificate.title }}</h3>
+                            <p>{{ certificate.issuer }}{% if certificate.issue_date %} · {{ certificate.issue_date|date:"M Y" }}{% endif %}</p>
+                            {% if certificate.credential_url %}<a href="{{ certificate.credential_url }}" target="_blank" rel="noopener">Verify Certificate ↗</a>{% endif %}
+                        </div>
+                    </article>
+                {% empty %}<p class="empty">Add your certificates from Django Admin.</p>{% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section section-light">
+        <div class="container narrow">
+            <p class="small-title">CONTACT</p>
+            <h2>Let's connect</h2>
+            {% if messages %}
+                {% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}
+            {% endif %}
+            <form method="post" action="{% url 'portfolio:contact' %}" class="contact-form">
+                {% csrf_token %}
+                <input type="text" name="name" placeholder="Your name" required>
+                <input type="email" name="email" placeholder="Your email" required>
+                <textarea name="message" rows="6" placeholder="Your message" required></textarea>
+                <button class="button primary" type="submit">Send Message</button>
+            </form>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">© {% now "Y" %} {% if profile %}{{ profile.name }}{% else %}My Portfolio{% endif %}</div>
+</footer>
+<script src="{% static 'portfolio_app/js/theme.js' %}"></script>
+</body>
+</html>
