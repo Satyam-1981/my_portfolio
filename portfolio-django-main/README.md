@@ -37,8 +37,7 @@ python manage.py runserver
 ```
 
 Open:
-- Website: http://127.0.0.1:8000/
-- Admin: http://127.0.0.1:8000/admin/
+- Website: https://my-portfolio-hxbi.onrender.com/
 
 ## Add content
 Use Django Admin to add projects, skills, education entries and certificates.
