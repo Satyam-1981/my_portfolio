@@ -1,33 +1,45 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const themeToggle = document.getElementById("theme-toggle");
+
     const root = document.documentElement;
+    const theme = document.getElementById("theme-toggle");
+    const navigation = document.querySelector(".navigation");
+    const navButton = document.getElementById("nav-button");
 
-    if (!themeToggle) return;
-
-    const savedTheme = localStorage.getItem("theme");
-
-    if (savedTheme === "dark") {
-        root.classList.add("dark");
+    function updateTheme() {
+        theme.textContent =
+            root.classList.contains("dark") ? "☀️" : "🌙";
     }
 
-    updateIcon();
+    if (localStorage.getItem("theme") === "dark")
+        root.classList.add("dark");
 
-    themeToggle.addEventListener("click", () => {
+    updateTheme();
+
+    theme.addEventListener("click", () => {
         root.classList.toggle("dark");
 
-        const isDark = root.classList.contains("dark");
-        localStorage.setItem("theme", isDark ? "dark" : "light");
+        localStorage.setItem(
+            "theme",
+            root.classList.contains("dark") ? "dark" : "light"
+        );
 
-        updateIcon();
+        updateTheme();
     });
 
-    function updateIcon() {
-        const isDark = root.classList.contains("dark");
+    navButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        navigation.classList.toggle("open");
+    });
 
-        themeToggle.textContent = isDark ? "☀️" : "🌙";
-        themeToggle.setAttribute(
-            "aria-label",
-            isDark ? "Switch to light mode" : "Switch to dark mode"
-        );
-    }
+    document.addEventListener("click", (e) => {
+        if (!navigation.contains(e.target))
+            navigation.classList.remove("open");
+    });
+
+    navigation.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+            navigation.classList.remove("open");
+        });
+    });
+
 });
