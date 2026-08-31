@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -10,12 +11,16 @@ class Profile(models.Model):
     location = models.CharField(max_length=120, blank=True)
     github_url = models.URLField(blank=True)
     linkedin_url = models.URLField(blank=True)
-    resume = models.FileField(upload_to="resume/", blank=True, null=True, help_text="Upload your resume as PDF or DOCX.")
+    resume = models.FileField(upload_to="resume/", blank=True, null=True)
     photo = models.ImageField(upload_to="profile/", blank=True, null=True)
 
     class Meta:
         verbose_name = "Profile"
         verbose_name_plural = "Profile"
+
+    def clean(self):
+        if self.pk is None and Profile.objects.exists():
+            raise ValidationError("Only one profile can be created for this portfolio.")
 
     def __str__(self):
         return self.name
@@ -25,7 +30,7 @@ class Skill(models.Model):
     name = models.CharField(max_length=80)
     category = models.CharField(max_length=80, default="Development")
     level = models.PositiveIntegerField(default=75)
-    icon = models.CharField(max_length=40, blank=True, help_text="Optional icon/short label")
+    icon = models.CharField(max_length=40, blank=True)
 
     class Meta:
         ordering = ["category", "name"]
@@ -48,6 +53,10 @@ class Project(models.Model):
     class Meta:
         ordering = ["order", "-id"]
 
+    @property
+    def technology_list(self):
+        return [item.strip() for item in self.technologies.split(",") if item.strip()]
+
     def __str__(self):
         return self.title
 
@@ -59,6 +68,8 @@ class Education(models.Model):
     start_year = models.PositiveIntegerField()
     end_year = models.PositiveIntegerField(blank=True, null=True)
     description = models.TextField(blank=True)
+    cgpa = models.CharField(max_length=20, blank=True)
+    percentage = models.CharField(max_length=20, blank=True)
     order = models.PositiveIntegerField(default=0)
 
     class Meta:
@@ -77,6 +88,19 @@ class Certificate(models.Model):
 
     class Meta:
         ordering = ["-issue_date", "-id"]
+
+    def __str__(self):
+        return self.title
+
+
+class Achievement(models.Model):
+    title = models.CharField(max_length=180)
+    description = models.TextField(blank=True)
+    icon = models.CharField(max_length=24, blank=True, default="✦")
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["order", "id"]
 
     def __str__(self):
         return self.title

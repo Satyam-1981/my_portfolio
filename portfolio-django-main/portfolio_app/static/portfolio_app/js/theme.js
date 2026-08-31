@@ -1,45 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const button = document.getElementById("nav-button");
+  const menu = document.getElementById("mobile-nav");
+  const themeToggle = document.getElementById("themeToggle");
+  const savedTheme = localStorage.getItem("portfolio-theme");
 
-    const root = document.documentElement;
-    const theme = document.getElementById("theme-toggle");
-    const navigation = document.querySelector(".navigation");
-    const navButton = document.getElementById("nav-button");
+  if (savedTheme === "light") document.body.classList.add("light-mode");
+  const updateIcon = () => { if (themeToggle) themeToggle.textContent = document.body.classList.contains("light-mode") ? "☀" : "☾"; };
+  updateIcon();
 
-    function updateTheme() {
-        theme.textContent =
-            root.classList.contains("dark") ? "☀️" : "🌙";
-    }
+  if (themeToggle) themeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("light-mode");
+    localStorage.setItem("portfolio-theme", document.body.classList.contains("light-mode") ? "light" : "dark");
+    updateIcon();
+  });
 
-    if (localStorage.getItem("theme") === "dark")
-        root.classList.add("dark");
-
-    updateTheme();
-
-    theme.addEventListener("click", () => {
-        root.classList.toggle("dark");
-
-        localStorage.setItem(
-            "theme",
-            root.classList.contains("dark") ? "dark" : "light"
-        );
-
-        updateTheme();
-    });
-
-    navButton.addEventListener("click", (e) => {
-        e.stopPropagation();
-        navigation.classList.toggle("open");
-    });
-
-    document.addEventListener("click", (e) => {
-        if (!navigation.contains(e.target))
-            navigation.classList.remove("open");
-    });
-
-    navigation.querySelectorAll("a").forEach(link => {
-        link.addEventListener("click", () => {
-            navigation.classList.remove("open");
-        });
-    });
-
+  if (button && menu) {
+    button.addEventListener("click", () => menu.classList.toggle("open"));
+    menu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => menu.classList.remove("open")));
+  }
 });
